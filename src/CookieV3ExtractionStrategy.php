@@ -16,7 +16,7 @@ class CookieV3ExtractionStrategy implements CookieExtractionStrategy
 
     }
 
-    public function getCookieChecksum() {
+    public function getCookieChecksum($decryptedCookie) {
         return $this->cookieChecksum;
     }
 
