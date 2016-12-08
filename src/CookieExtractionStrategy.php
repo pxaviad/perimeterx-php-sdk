@@ -9,6 +9,8 @@ interface CookieExtractionStrategy
     public function getScore();
 }
 
+namespace Perimeterx;
+
 class CookieV1ExtractionStrategy implements CookieExtractionStrategy
 {
 
@@ -32,6 +34,8 @@ class CookieV1ExtractionStrategy implements CookieExtractionStrategy
     }
 
 }
+
+namespace Perimeterx;
 
 class CookieV3ExtractionStrategy implements CookieExtractionStrategy
 {

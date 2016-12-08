@@ -2,7 +2,6 @@
 
 namespace Perimeterx;
 
-
 class PerimeterxCookie
 {
 
