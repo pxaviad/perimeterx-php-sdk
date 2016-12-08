@@ -6,7 +6,7 @@ interface CookieExtractionStrategy
 {
     public function getCookieData();
     public function getCookieChecksum($decodedCookie);
-    public function getScore();
+    public function getScore($decodedCookie);
 }
 
 ?>
