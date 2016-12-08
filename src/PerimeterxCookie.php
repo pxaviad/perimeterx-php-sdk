@@ -2,13 +2,68 @@
 
 namespace Perimeterx;
 
+interface CookieExtractionStrategy
+{
+    public function getCookieData();
+    public function getCookieChecksum();
+    public function getScore();
+}
+
+class CookieV1ExtractionStrategy implements CookieExtractionStrategy
+{
+
+    private $pxCookieData;
+    private $cookieChecksum;
+
+    public function __construct($pxCookieData) {
+        $this->pxCookieData = $pxCookieData;
+    }
+
+    public function getCookieData() {
+        return $this->pxCookieData;
+    }
+
+    public function getCookieChecksum($decodedCookie) {
+        return $decodedCookie->h;
+    }
+
+    public function getScore($decodedScore) {
+        return $decodedCookie->s->a;
+    }
+
+}
+
+class CookieV3ExtractionStrategy implements CookieExtractionStrategy
+{
+    private $pxCookieData;
+    private $cookieChecksum;
+
+    public function __construct($cookieChekcsum, $pxCookieData) {
+        $this->cookieChecksum = $cookieChecksum;
+        $this->pxCookieData = $pxCookieData;
+    }
+
+    public function getCookieData() {
+        return $this->pxCookieData;
+
+    }
+
+    public function getCookieChecksum() {
+        return $this->cookieChecksum;
+    }
+
+    public function getScore($decodedScore) {
+        return $decodedCookie->s;
+    }
+}
+
 class PerimeterxCookie
 {
 
     /**
-     * @var string
+     * @var object - cookie values extraction strategy
      */
-    private $pxCookie;
+    private cookieExtractionStrategy;
 
     /**
      * @var object - perimeterx configuration object
@@ -31,7 +86,12 @@ class PerimeterxCookie
      */
     public function __construct($pxCtx, $pxConfig)
     {
-        $this->pxCookie = $pxCtx->getPxCookie();
+        $splitCookie = split($pxCtx->getPxCookie(), ":");
+        if (count($splitCookie) === 2) {
+            $this->$cookieExtractStrategy = new CookieV3ExtractionStrategy($splitCookie[0], $splitCookie[1]);
+        } else {
+            $this->$cookieExtractStrategy = new CookieV1ExtractionStrategy($pxCtx->getPxCookie());
+        }
         $this->pxConfig = $pxConfig;
         $this->pxCtx = $pxCtx;
         $this->cookieSecret = $pxConfig['cookie_key'];
@@ -54,7 +114,7 @@ class PerimeterxCookie
 
     public function getScore()
     {
-        return $this->getDecodedCookie()->s->b;
+        return $this->cookieExtractionStrategy->getScore($decodedCookie);
     }
 
     public function getUuid()
@@ -69,7 +129,7 @@ class PerimeterxCookie
 
     private function getHmac()
     {
-        return $this->getDecodedCookie()->h;
+        return $this->cookieExtractionStrategy->getCookieChecksum();
     }
 
     /**
@@ -159,13 +219,17 @@ class PerimeterxCookie
         return true;
     }
 
+    private function getCookieData() {
+        return $this->cookieExtractionStrategy->getCookieData();
+    }
+
     private function decrypt()
     {
         $ivlen = 16;
         $keylen = 32;
         $digest = 'sha256';
 
-        $cookie = $this->pxCookie;
+        $cookie = $this->getCookieData();
         list($salt, $iterations, $cookie) = explode(":", $cookie);
         $iterations = intval($iterations);
         $salt = base64_decode($salt);
@@ -198,7 +262,7 @@ class PerimeterxCookie
      */
     private function decode()
     {
-        $data_str = base64_decode($this->pxCookie);
+        $data_str = base64_decode($this->getCookieData());
         return json_decode($data_str);
     }
 

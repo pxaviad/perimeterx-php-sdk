@@ -58,7 +58,7 @@ class PerimeterxCookieValidator
                 $this->pxCtx->setS2SCallReason('cookie_expired');
                 return false;
             }
-            
+
             if ($cookie->isHighScore()) {
                 $this->pxConfig['logger']->info('cookie high score');
                 $this->pxCtx->setBlockReason('cookie_high_score');

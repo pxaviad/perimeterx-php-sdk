@@ -13,7 +13,11 @@ class PerimeterxContext
             foreach (explode('; ', $_SERVER['HTTP_COOKIE']) as $rawcookie) {
                 if (!empty($rawcookie) && strpos($rawcookie, '=') !== false) {
                     list($k, $v) = explode('=', $rawcookie, 2);
-                    if ($k == '_px') {
+                    if ($k == '_px3') {
+                        $this->px_cookie = $v;
+                    }
+                    // V3 cookie is taking precedence over v1 cookie
+                    if ($k == '_px' && !isset($this->px_cookie)) {
                         $this->px_cookie = $v;
                     }
                     if ($k == '_pxCaptcha') {
@@ -149,12 +153,12 @@ class PerimeterxContext
      * @var string user's score.
      */
     protected $uuid;
-    
+
     /**
      * @var bool true if request was sent to S2S risk api
      */
     protected $is_made_s2s_api_call;
-    
+
     /**
      * @var string S2S api call HTTP error message
      */
@@ -207,7 +211,7 @@ class PerimeterxContext
     {
         $this->uuid = $uuid;
     }
-    
+
     /**
      * @param string $is_made_s2s_api_call
      */
@@ -277,7 +281,6 @@ class PerimeterxContext
      */
     public function setS2SCallReason($s2s_call_reason)
     {
-        //echo 'set call reason';
         $this->s2s_call_reason = $s2s_call_reason;
     }
 
