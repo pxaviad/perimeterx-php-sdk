@@ -9,7 +9,7 @@ class PerimeterxCookie
     /**
      * @var object - cookie values extraction strategy
      */
-    private cookieExtractionStrategy;
+    private $cookieExtractionStrategy;
 
     /**
      * @var object - perimeterx configuration object
