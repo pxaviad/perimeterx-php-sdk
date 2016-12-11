@@ -72,14 +72,14 @@ class PerimeterxCookie
         return $this->getDecodedCookie()->v;
     }
 
+    public function getAction()
+    {
+        return $this->cookieExtractStrategy->getAction($this->decodedCookie);
+    }
+
     private function getHmac()
     {
         return $this->cookieExtractStrategy->getCookieChecksum($this->decodedCookie);
-    }
-
-    private function getAction()
-    {
-        return $this->cookieExtractStrategy->getAction($this->decodedCookie);
     }
 
     private function getBaseHmacString() {
