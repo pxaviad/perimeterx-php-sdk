@@ -76,9 +76,6 @@ final class Perimeterx
         }
         try {
 
-            error_log('app id' . $pxConfig['app_id']);
-            $appId = $pxConfig['app_id'];
-
             $this->pxConfig = array_merge([
                 'app_id' => null,
                 'cookie_key' => null,
@@ -93,7 +90,7 @@ final class Perimeterx
                 'send_block_activities' => true,
                 'sdk_name' => 'PHP SDK v2.2.3',
                 'debug_mode' => false,
-                'perimeterx_server_host' => 'https://sapi-' . strtolower($appId) . '.glb1.perimeterx.net',
+                'perimeterx_server_host' => 'https://sapi-' . strtolower($pxConfig['app_id']) . '.glb1.perimeterx.net',
                 'module_mode' => Perimeterx::$ACTIVE_MODE,
                 'api_timeout' => 1,
                 'api_connect_timeout' => 1,

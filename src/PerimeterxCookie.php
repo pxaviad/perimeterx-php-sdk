@@ -216,7 +216,10 @@ class PerimeterxCookie
 
     private function isHmacValid($hmac_str, $cookie_hmac)
     {
+        error_log('hmac_str: ' . $hmac_str);
         $hmac = hash_hmac('sha256', $hmac_str, $this->cookieSecret);
+
+        error_log('cookie_hmac: ' . $cookie_hmac);
 
         if (function_exists('hash_equals')) {
             return hash_equals($hmac, $cookie_hmac);
