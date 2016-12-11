@@ -97,6 +97,8 @@ final class Perimeterx
                 'local_proxy' => false
             ], $pxConfig);
 
+            error_log('host ' . $this->pxConfig['perimeterx_server_host']);
+
             if (empty($this->pxConfig['logger'])) {
                 $this->pxConfig['logger'] = new PerimeterxLogger();
             }
