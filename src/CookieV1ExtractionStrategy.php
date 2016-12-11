@@ -20,8 +20,9 @@ class CookieV1ExtractionStrategy implements CookieExtractionStrategy
         return $decodedCookie->h;
     }
 
-    public function getScore($decodedScore) {
-        return $decodedCookie->s->a;
+    public function getScore($decodedCookie) {
+        error_log(' the scoreeeeeee ' . $decodedCookie->s->b);
+        return $decodedCookie->s->b;
     }
 
 }
