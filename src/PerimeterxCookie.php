@@ -32,13 +32,9 @@ class PerimeterxCookie
     public function __construct($pxCtx, $pxConfig)
     {
         $splitCookie = explode(':', $pxCtx->getPxCookie());
-        $s = var_export($splitCookie);
-        error_log('split cookie' . $s);
         if (count($splitCookie) === 2) {
-            error_log('we are going to create cookiev3 extraction strategy');
             $this->cookieExtractStrategy = new CookieV3ExtractionStrategy($splitCookie[0], $splitCookie[1]);
         } else {
-            error_log('we are going to create cookiev1 extraction strategy');
             $this->cookieExtractStrategy = new CookieV1ExtractionStrategy($pxCtx->getPxCookie());
         }
         $this->pxConfig = $pxConfig;
@@ -111,17 +107,20 @@ class PerimeterxCookie
     public function isSecure()
     {
         $base_hmac_str = $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
-
+        error_log('base hmac str' . $base_hmac_str);
         /* hmac string with ip - for backward support */
         $hmac_str_withip = $base_hmac_str . $this->pxCtx->getIp() . $this->pxCtx->getUserAgent();
+        error_log('base str with ip ' . $hmac_str_withip);
 
         /* hmac string with no ip */
         $hmac_str_withoutip = $base_hmac_str . $this->pxCtx->getUserAgent();
+        error_log('base str with ip ' . $hmac_str_withoutip);
 
         if ($this->isHmacValid($hmac_str_withoutip, $this->getHmac()) or $this->isHmacValid($hmac_str_withip, $this->getHmac())) {
+            error_log('hmac is valid!!!');
             return true;
         }
-
+        error_log("hamac is not valid");
         return false;
     }
 
