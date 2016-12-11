@@ -76,8 +76,8 @@ final class Perimeterx
         }
         try {
 
-            error_log('app id' . $this->pxConfig['app_id']);
-            $appId = $this->pxConfig['app_id'];
+            error_log('app id' . $pxConfig['app_id']);
+            $appId = $pxConfig['app_id'];
 
             $this->pxConfig = array_merge([
                 'app_id' => null,
