@@ -59,7 +59,7 @@ class PerimeterxCookie
 
     public function getScore()
     {
-        return $this->cookieExtractStrategy->getScore($decodedCookie);
+        return $this->cookieExtractStrategy->getScore($this->getDecodedCookie());
     }
 
     public function getUuid()
@@ -106,19 +106,17 @@ class PerimeterxCookie
      */
     public function isSecure()
     {
-        $base_hmac_str = $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
+        $base_hmac_str = $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid(); // TODO: part of strategy
         /* hmac string with ip - for backward support */
         $hmac_str_withip = $base_hmac_str . $this->pxCtx->getIp() . $this->pxCtx->getUserAgent();
 
         /* hmac string with no ip */
         $hmac_str_withoutip = $base_hmac_str . $this->pxCtx->getUserAgent();
-        error_log('base str with ip ' . $hmac_str_withoutip);
+        error_log('final hmac: ' . $hmac_str_withoutip);
 
         if ($this->isHmacValid($hmac_str_withoutip, $this->getHmac()) or $this->isHmacValid($hmac_str_withip, $this->getHmac())) {
-            error_log('hmac is valid!!!');
             return true;
         }
-        error_log("hamac is not valid");
         return false;
     }
 
