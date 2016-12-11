@@ -8,7 +8,7 @@ class PerimeterxCookie
     /**
      * @var object - cookie values extraction strategy
      */
-    private $cookieExtractionStrategy;
+    private $cookieExtractStrategy;
 
     /**
      * @var object - perimeterx configuration object
@@ -63,7 +63,7 @@ class PerimeterxCookie
 
     public function getScore()
     {
-        return $this->cookieExtractionStrategy->getScore($decodedCookie);
+        return $this->cookieExtractStrategy->getScore($decodedCookie);
     }
 
     public function getUuid()
@@ -78,7 +78,7 @@ class PerimeterxCookie
 
     private function getHmac()
     {
-        return $this->cookieExtractionStrategy->getCookieChecksum();
+        return $this->cookieExtractStrategy->getCookieChecksum();
     }
 
     /**
@@ -169,7 +169,7 @@ class PerimeterxCookie
     }
 
     private function getCookieData() {
-        return $this->cookieExtractionStrategy->getCookieData();
+        return $this->cookieExtractStrategy->getCookieData();
     }
 
     private function decrypt()
