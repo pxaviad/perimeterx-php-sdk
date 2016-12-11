@@ -77,6 +77,18 @@ class PerimeterxCookie
         return $this->cookieExtractStrategy->getCookieChecksum($this->decodedCookie);
     }
 
+    private function getAction()
+    {
+        return $this->cookieExtractStrategy->getAction($this->decodedCookie);
+    }
+
+    private function getBaseHmacString() {
+        if (isset($this->decodedCookie->s, $this->decodedCookie->s->a)) {
+            return $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
+        }
+        return $this->getTime() . $this->getScore() . $this->getUuid() . $this->getVid();
+    }
+
     /**
      * Checks if the cookie's score is above the configured blocking score
      *
@@ -106,13 +118,13 @@ class PerimeterxCookie
      */
     public function isSecure()
     {
-        $base_hmac_str = $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid(); // TODO: part of strategy
+        //$base_hmac_str = $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid(); // TODO: part of strategy
+        $base_hmac_str = $this->getBaseHmacString();
         /* hmac string with ip - for backward support */
         $hmac_str_withip = $base_hmac_str . $this->pxCtx->getIp() . $this->pxCtx->getUserAgent();
 
         /* hmac string with no ip */
         $hmac_str_withoutip = $base_hmac_str . $this->pxCtx->getUserAgent();
-        error_log('final hmac: ' . $hmac_str_withoutip);
 
         if ($this->isHmacValid($hmac_str_withoutip, $this->getHmac()) or $this->isHmacValid($hmac_str_withip, $this->getHmac())) {
             return true;
@@ -212,10 +224,7 @@ class PerimeterxCookie
 
     private function isHmacValid($hmac_str, $cookie_hmac)
     {
-        error_log('hmac_str: ' . $hmac_str);
         $hmac = hash_hmac('sha256', $hmac_str, $this->cookieSecret);
-
-        error_log('cookie_hmac: ' . $cookie_hmac);
 
         if (function_exists('hash_equals')) {
             return hash_equals($hmac, $cookie_hmac);

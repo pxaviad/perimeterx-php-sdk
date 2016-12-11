@@ -4,10 +4,11 @@ namespace Perimeterx;
 
 class PerimeterxS2SValidator extends PerimeterxRiskClient
 {
-    const RISK_API_ENDPOINT = '/api/v1/risk';
+    const RISK_API_ENDPOINT = '/api/v2/risk';
 
     private function sendRiskRequest()
     {
+        error_log(' sending risk request ');
         if ($this->pxConfig['module_mode'] == Perimeterx::$ACTIVE_MODE) {
             $risk_mode = 'active_blocking';
         } else {
@@ -55,16 +56,17 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
         } else {
             $response = $this->httpClient->send(self::RISK_API_ENDPOINT, 'POST', $requestBody, $headers, $this->pxConfig['api_timeout'], $this->pxConfig['api_connect_timeout']);
         }
+        error_log('response ' . json_encode($response));
         return $response;
     }
 
     public function verify()
     {
+        error_log('verifying ..');
         $response = json_decode($this->sendRiskRequest());
         $this->pxCtx->setIsMadeS2SRiskApiCall(true);
-        if (isset($response, $response->scores, $response->scores->non_human)) {
-            $score = $response->scores->non_human;
-            $this->pxCtx->setScore($score);
+        if (isset($response, $response->score)) {
+            $this->pxCtx->setScore($response->$score);
             $this->pxCtx->setUuid($response->uuid);
             if ($score >= $this->pxConfig['blocking_score']) {
                 $this->pxCtx->setBlockReason('s2s_high_score');

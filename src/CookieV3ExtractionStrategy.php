@@ -13,7 +13,6 @@ class CookieV3ExtractionStrategy implements CookieExtractionStrategy
 
     public function getCookieData() {
         return $this->pxCookieData;
-
     }
 
     public function getCookieChecksum($decryptedCookie) {
@@ -23,6 +22,11 @@ class CookieV3ExtractionStrategy implements CookieExtractionStrategy
     public function getScore($decodedCookie) {
         return $decodedCookie->s;
     }
+
+    public function getAction($decodedCookie) {
+        return $decryptedCookie->a;
+    }
+
 }
 
 ?>
