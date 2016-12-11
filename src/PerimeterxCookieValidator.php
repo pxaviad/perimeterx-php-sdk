@@ -49,7 +49,7 @@ class PerimeterxCookieValidator
             }
 
             $this->pxCtx->setDecodedCookie($cookie->getDecodedCookie());
-            error_log('decoded cookie' . $cookie->getDecodedCookie());
+            error_log('decoded cookie' . json_encode($cookie->getDecodedCookie()));
             $this->pxCtx->setScore($cookie->getScore());
             $this->pxCtx->setUuid($cookie->getUuid());
             $this->pxCtx->setVid($cookie->getVid());
