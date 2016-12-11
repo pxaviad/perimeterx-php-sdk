@@ -196,7 +196,6 @@ class PerimeterxCookie
         $key = substr($derivation, 0, $keylen);
         $iv = substr($derivation, $keylen);
         $cookie = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $cookie, MCRYPT_MODE_CBC, $iv);
-        error_log('this is the cookie decrypted ' . json_encode($cookie));
         return $this->unpad($cookie);
     }
 

@@ -372,13 +372,25 @@ class PerimeterxContext
         $this->decoded_px_cookie = $cookie;
     }
 
-    private function selfURL()
+    /**
+     * If flag is set - captcha should be displayed
+     *
+     * @param string $action
+     */
+    public function setCaptchaFlag($action)
     {
-        $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
-        $l = strtolower($_SERVER["SERVER_PROTOCOL"]);
-        $protocol = substr($l, 0, strpos($l, "/")) . $s;
-        $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
-        return $protocol . "://" . $_SERVER['HTTP_HOST'] . $port . $this->uri;
+        // support captcha and c
+        // support block and b
+        $this->displayCaptcha = $action === 'b' ? false : true;
+    }
+
+
+    /**
+     * @return boolen true if should show captcha, false - block without captcha
+     */
+    public function isCaptchaFlagOn()
+    {
+        return $this->displayCaptcha;
     }
 
     /**
@@ -395,6 +407,15 @@ class PerimeterxContext
     public function getHttpMethod()
     {
         return $this->http_method;
+    }
+
+    private function selfURL()
+    {
+        $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
+        $l = strtolower($_SERVER["SERVER_PROTOCOL"]);
+        $protocol = substr($l, 0, strpos($l, "/")) . $s;
+        $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":" . $_SERVER["SERVER_PORT"]);
+        return $protocol . "://" . $_SERVER['HTTP_HOST'] . $port . $this->uri;
     }
 
 }

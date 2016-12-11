@@ -49,10 +49,10 @@ class PerimeterxCookieValidator
             }
 
             $this->pxCtx->setDecodedCookie($cookie->getDecodedCookie());
-            error_log('decoded cookie' . json_encode($cookie->getDecodedCookie()));
             $this->pxCtx->setScore($cookie->getScore());
             $this->pxCtx->setUuid($cookie->getUuid());
             $this->pxCtx->setVid($cookie->getVid());
+            $this->pxCtx->setCaptchaFlag($cookie->getAction());
 
             if ($cookie->isExpired()) {
                 $this->pxConfig['logger']->info('cookie expired');
