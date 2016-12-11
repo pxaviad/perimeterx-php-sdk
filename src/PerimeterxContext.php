@@ -384,7 +384,6 @@ class PerimeterxContext
         $this->displayCaptcha = $action === 'b' ? false : true;
     }
 
-
     /**
      * @return boolen true if should show captcha, false - block without captcha
      */
