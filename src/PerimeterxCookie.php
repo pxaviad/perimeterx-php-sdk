@@ -107,10 +107,8 @@ class PerimeterxCookie
     public function isSecure()
     {
         $base_hmac_str = $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
-        error_log('base hmac str' . $base_hmac_str);
         /* hmac string with ip - for backward support */
         $hmac_str_withip = $base_hmac_str . $this->pxCtx->getIp() . $this->pxCtx->getUserAgent();
-        error_log('base str with ip ' . $hmac_str_withip);
 
         /* hmac string with no ip */
         $hmac_str_withoutip = $base_hmac_str . $this->pxCtx->getUserAgent();
