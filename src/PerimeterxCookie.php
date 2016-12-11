@@ -31,7 +31,7 @@ class PerimeterxCookie
      */
     public function __construct($pxCtx, $pxConfig)
     {
-        $splitCookie = split($pxCtx->getPxCookie(), ":");
+        $splitCookie = split(':', $pxCtx->getPxCookie());
         if (count($splitCookie) === 2) {
             $this->cookieExtractStrategy = new CookieV3ExtractionStrategy($splitCookie[0], $splitCookie[1]);
         } else {

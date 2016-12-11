@@ -20,7 +20,7 @@ class CookieV3ExtractionStrategy implements CookieExtractionStrategy
         return $this->cookieChecksum;
     }
 
-    public function getScore($decodedScore) {
+    public function getScore($decodedCookie) {
         return $decodedCookie->s;
     }
 }
