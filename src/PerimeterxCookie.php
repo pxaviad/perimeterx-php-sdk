@@ -191,9 +191,9 @@ class PerimeterxCookie
         $cookie = $this->getCookieData();
         error_log('cookie ' . $cookie);
         list($salt, $iterations, $cookie) = explode(":", $cookie);
-        error_log('salt ' .$salt)
-        error_log('iterations ' .$iterations)
-        error_log('cookie ' .$cookie)
+        error_log('salt ' .$salt);
+        error_log('iterations ' .$iterations);
+        error_log('cookie ' .$cookie);
         $iterations = intval($iterations);
         $salt = base64_decode($salt);
         $cookie = base64_decode($cookie);
