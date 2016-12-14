@@ -171,6 +171,7 @@ class PerimeterxCookie
 
         //if (!isset($cookie->t, $cookie->s, $cookie->s->b, $cookie->u, $cookie->v, $cookie->h)) {
         if (!isset($cookie->t, $cookie->s, $cookie->u, $cookie->v)) {
+            error_log('cookie declined : ' . json_encode($cookie));
             return false;
         }
 
