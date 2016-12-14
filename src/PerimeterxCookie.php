@@ -129,7 +129,7 @@ class PerimeterxCookie
         /* hmac string with no ip */
         $hmac_str_withoutip = $base_hmac_str . $this->pxCtx->getUserAgent();
 
-        if ($this->isHmacValid($base_hmac_str, $this->getHmac()) {
+        if ($this->isHmacValid($base_hmac_str, $this->getHmac())) {
             return true;
         }
 
