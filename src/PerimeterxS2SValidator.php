@@ -4,7 +4,7 @@ namespace Perimeterx;
 
 class PerimeterxS2SValidator extends PerimeterxRiskClient
 {
-    const RISK_API_ENDPOINT = '/api/v1/risk';
+    const RISK_API_ENDPOINT = '/api/v2/risk';
 
     private function sendRiskRequest()
     {
@@ -62,10 +62,10 @@ class PerimeterxS2SValidator extends PerimeterxRiskClient
     {
         $response = json_decode($this->sendRiskRequest());
         $this->pxCtx->setIsMadeS2SRiskApiCall(true);
-        if (isset($response, $response->scores, $response->scores->non_human)) {
-            $score = $response->scores->non_human;
-            $this->pxCtx->setScore($score);
+        if (isset($response, $response->score)) {
+            $this->pxCtx->setScore($response->score);
             $this->pxCtx->setUuid($response->uuid);
+            $this->pxCtx->setCaptchaFlag($response->action);
             if ($score >= $this->pxConfig['blocking_score']) {
                 $this->pxCtx->setBlockReason('s2s_high_score');
             }

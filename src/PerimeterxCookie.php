@@ -6,9 +6,9 @@ class PerimeterxCookie
 {
 
     /**
-     * @var string
+     * @var object - cookie values extraction strategy
      */
-    private $pxCookie;
+    private $cookieExtractStrategy;
 
     /**
      * @var object - perimeterx configuration object
@@ -31,7 +31,14 @@ class PerimeterxCookie
      */
     public function __construct($pxCtx, $pxConfig)
     {
-        $this->pxCookie = $pxCtx->getPxCookie();
+        $count = substr_count($pxCtx->getPxCookie(), ":");
+        $pos = strpos($pxCtx->getPxCookie, ":");
+        if ($count === 3) {
+            error_log('starting cookie v3 extration strategy');
+            $this->cookieExtractStrategy = new CookieV3ExtractionStrategy($pxCtx->getPxCookie());
+        } else {
+            $this->cookieExtractStrategy = new CookieV1ExtractionStrategy($pxCtx->getPxCookie());
+        }
         $this->pxConfig = $pxConfig;
         $this->pxCtx = $pxCtx;
         $this->cookieSecret = $pxConfig['cookie_key'];
@@ -54,7 +61,7 @@ class PerimeterxCookie
 
     public function getScore()
     {
-        return $this->getDecodedCookie()->s->b;
+        return $this->cookieExtractStrategy->getScore($this->getDecodedCookie());
     }
 
     public function getUuid()
@@ -67,9 +74,22 @@ class PerimeterxCookie
         return $this->getDecodedCookie()->v;
     }
 
+    public function getAction()
+    {
+        return $this->cookieExtractStrategy->getAction($this->decodedCookie);
+    }
+
     private function getHmac()
     {
-        return $this->getDecodedCookie()->h;
+        return $this->cookieExtractStrategy->getCookieChecksum($this->decodedCookie);
+    }
+
+    private function getBaseHmacString() {
+        if (isset($this->decodedCookie->s, $this->decodedCookie->s->a)) {
+            return $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
+        }
+        return json_encode($this->decodedCookie);
+        //return $this->getTime() . $this->getScore() . $this->getUuid() . $this->getVid();
     }
 
     /**
@@ -101,7 +121,7 @@ class PerimeterxCookie
      */
     public function isSecure()
     {
-        $base_hmac_str = $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
+        $base_hmac_str = $this->getBaseHmacString();
 
         /* hmac string with ip - for backward support */
         $hmac_str_withip = $base_hmac_str . $this->pxCtx->getIp() . $this->pxCtx->getUserAgent();
@@ -109,10 +129,13 @@ class PerimeterxCookie
         /* hmac string with no ip */
         $hmac_str_withoutip = $base_hmac_str . $this->pxCtx->getUserAgent();
 
-        if ($this->isHmacValid($hmac_str_withoutip, $this->getHmac()) or $this->isHmacValid($hmac_str_withip, $this->getHmac())) {
+        if ($this->isHmacValid($base_hmac_str, $this->getHmac())) {
             return true;
         }
 
+        //if ($this->isHmacValid($hmac_str_withoutip, $this->getHmac()) or $this->isHmacValid($hmac_str_withip, $this->getHmac())) {
+            //return true;
+        //}
         return false;
     }
 
@@ -150,13 +173,20 @@ class PerimeterxCookie
             return false;
         }
 
-        if (!isset($cookie->t, $cookie->s, $cookie->s->b, $cookie->u, $cookie->v, $cookie->h)) {
-            return false;
-        }
+        // TODO: change this to be stuff
+        //if (!isset($cookie->t, $cookie->s, $cookie->s->b, $cookie->u, $cookie->v, $cookie->h)) {
+        //if (!isset($cookie->t, $cookie->s, $cookie->u, $cookie->v)) {
+            //error_log('cookie declined : ' . json_encode($cookie));
+            //return false;
+        //}
 
         $this->decodedCookie = $cookie;
 
         return true;
+    }
+
+    private function getCookieData() {
+        return $this->cookieExtractStrategy->getCookieData();
     }
 
     private function decrypt()
@@ -165,18 +195,22 @@ class PerimeterxCookie
         $keylen = 32;
         $digest = 'sha256';
 
-        $cookie = $this->pxCookie;
+        $cookie = $this->getCookieData();
+        error_log('cookie ' . $cookie);
         list($salt, $iterations, $cookie) = explode(":", $cookie);
+        //error_log('salt ' .$salt);
+        //error_log('iterations ' .$iterations);
+        //error_log('cookie ' .$cookie);
         $iterations = intval($iterations);
         $salt = base64_decode($salt);
+        //error_log('decoded salt ' . $salt);
         $cookie = base64_decode($cookie);
-
+        //error_log('decoded cookie ' . $cookie);
 
         $derivation = hash_pbkdf2($digest, $this->cookieSecret, $salt, $iterations, $ivlen + $keylen, true);
         $key = substr($derivation, 0, $keylen);
         $iv = substr($derivation, $keylen);
         $cookie = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key, $cookie, MCRYPT_MODE_CBC, $iv);
-
         return $this->unpad($cookie);
     }
 
@@ -198,13 +232,15 @@ class PerimeterxCookie
      */
     private function decode()
     {
-        $data_str = base64_decode($this->pxCookie);
+        $data_str = base64_decode($this->getCookieData());
         return json_decode($data_str);
     }
 
     private function isHmacValid($hmac_str, $cookie_hmac)
     {
+        error_log('cookie hmac: ' . $cookie_hmac);
         $hmac = hash_hmac('sha256', $hmac_str, $this->cookieSecret);
+        error_log('tested hmac: ' . $hmac);
 
         if (function_exists('hash_equals')) {
             return hash_equals($hmac, $cookie_hmac);
