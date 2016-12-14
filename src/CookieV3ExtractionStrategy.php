@@ -9,7 +9,7 @@ class CookieV3ExtractionStrategy implements CookieExtractionStrategy
     public function __construct($pxCookie) {
         $pos = strpos($pxCookie, ":");
         $this->cookieChecksum = substr($pxCookie, 0, $pos);
-        $this->pxCookieData = substr($pxCookie, pos + 1);
+        $this->pxCookieData = substr($pxCookie, $pos + 1);
         error_log('checksum: ' . $this->cookieChecksum);
         error_log('cookie data: ' . $this->pxCookieData);
     }
