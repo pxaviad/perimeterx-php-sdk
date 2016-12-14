@@ -194,9 +194,9 @@ class PerimeterxCookie
         $cookie = $this->getCookieData();
         error_log('cookie ' . $cookie);
         list($salt, $iterations, $cookie) = explode(":", $cookie);
-        error_log('salt ' .$salt);
-        error_log('iterations ' .$iterations);
-        error_log('cookie ' .$cookie);
+        //error_log('salt ' .$salt);
+        //error_log('iterations ' .$iterations);
+        //error_log('cookie ' .$cookie);
         $iterations = intval($iterations);
         $salt = base64_decode($salt);
         //error_log('decoded salt ' . $salt);
@@ -234,7 +234,9 @@ class PerimeterxCookie
 
     private function isHmacValid($hmac_str, $cookie_hmac)
     {
+        error_log('cookie hmac: ' . $cookie_hmac);
         $hmac = hash_hmac('sha256', $hmac_str, $this->cookieSecret);
+        error_log('tested hmac: ' . $hmac);
 
         if (function_exists('hash_equals')) {
             return hash_equals($hmac, $cookie_hmac);
