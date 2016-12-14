@@ -33,7 +33,7 @@ class PerimeterxCookie
     {
         $count = substr_count($pxCtx->getPxCookie(), ":");
         $pos = strpos($pxCtx->getPxCookie, ":");
-        if (count === 3) {
+        if ($count === 3) {
             error_log('starting cookie v3 extration strategy');
             $this->cookieExtractStrategy = new CookieV3ExtractionStrategy($pxCtx->getPxCookie());
         } else {
