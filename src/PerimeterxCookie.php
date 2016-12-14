@@ -31,6 +31,7 @@ class PerimeterxCookie
      */
     public function __construct($pxCtx, $pxConfig)
     {
+        error_log('cookie '. $pxCtx->getPxCookie());
         $count = substr_count($pxCtx->getPxCookie(), ":");
         $pos = strpos($pxCtx->getPxCookie, ":");
         if ($count === 3) {
