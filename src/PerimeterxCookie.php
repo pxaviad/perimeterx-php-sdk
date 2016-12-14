@@ -170,7 +170,7 @@ class PerimeterxCookie
         }
 
         //if (!isset($cookie->t, $cookie->s, $cookie->s->b, $cookie->u, $cookie->v, $cookie->h)) {
-        if (!isset($cookie->t, $cookie->s, $cookie->u, $cookie->v, $cookie->h)) {
+        if (!isset($cookie->t, $cookie->s, $cookie->u, $cookie->v)) {
             return false;
         }
 
@@ -197,9 +197,9 @@ class PerimeterxCookie
         error_log('cookie ' .$cookie);
         $iterations = intval($iterations);
         $salt = base64_decode($salt);
-        error_log('decoded salt ' . $salt);
+        //error_log('decoded salt ' . $salt);
         $cookie = base64_decode($cookie);
-        error_log('decoded cookie ' . $cookie);
+        //error_log('decoded cookie ' . $cookie);
 
         $derivation = hash_pbkdf2($digest, $this->cookieSecret, $salt, $iterations, $ivlen + $keylen, true);
         $key = substr($derivation, 0, $keylen);
