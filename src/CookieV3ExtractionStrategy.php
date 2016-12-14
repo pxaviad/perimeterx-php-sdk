@@ -6,11 +6,12 @@ class CookieV3ExtractionStrategy implements CookieExtractionStrategy
     private $pxCookieData;
     private $cookieChecksum;
 
-    public function __construct($cookieChekcsum, $pxCookieData) {
-        error_log('checksum: ' . $cookieChecksum);
-        error_log('cookie data: ' . $pxCookieData);
-        $this->cookieChecksum = $cookieChecksum;
-        $this->pxCookieData = $pxCookieData;
+    public function __construct($pxCookie) {
+        $pos = strpos($pxCookie, ":");
+        $this->cookieChecksum = substr($pxCookie, 0, $pos);
+        $this->pxCookieData = substr($pxCookie, pos + 1);
+        error_log('checksum: ' . $this->cookieChecksum);
+        error_log('cookie data: ' . $this->pxCookieData);
     }
 
     public function getCookieData() {

@@ -31,11 +31,11 @@ class PerimeterxCookie
      */
     public function __construct($pxCtx, $pxConfig)
     {
-        $splitCookie = explode(':', $pxCtx->getPxCookie());
-        error_log('count :' . $count);
-        if (count($splitCookie) === 4) {
+        $count = substr_count($pxCtx->getPxCookie(), ":");
+        $pos = strpos($pxCtx->getPxCookie, ":");
+        if (count === 3) {
             error_log('starting cookie v3 extration strategy');
-            $this->cookieExtractStrategy = new CookieV3ExtractionStrategy($splitCookie[0], $splitCookie[1]);
+            $this->cookieExtractStrategy = new CookieV3ExtractionStrategy($pxCtx->getPxCookie());
         } else {
             $this->cookieExtractStrategy = new CookieV1ExtractionStrategy($pxCtx->getPxCookie());
         }
