@@ -33,6 +33,7 @@ class PerimeterxCookie
     {
         $splitCookie = explode(':', $pxCtx->getPxCookie());
         if (count($splitCookie) === 2) {
+            error_log('starting cookie v3 extration strategy');
             $this->cookieExtractStrategy = new CookieV3ExtractionStrategy($splitCookie[0], $splitCookie[1]);
         } else {
             $this->cookieExtractStrategy = new CookieV1ExtractionStrategy($pxCtx->getPxCookie());
@@ -186,11 +187,11 @@ class PerimeterxCookie
         $digest = 'sha256';
 
         $cookie = $this->getCookieData();
+        error_log('cookie ' . $cookie);
         list($salt, $iterations, $cookie) = explode(":", $cookie);
         $iterations = intval($iterations);
         $salt = base64_decode($salt);
         $cookie = base64_decode($cookie);
-
 
         $derivation = hash_pbkdf2($digest, $this->cookieSecret, $salt, $iterations, $ivlen + $keylen, true);
         $key = substr($derivation, 0, $keylen);
