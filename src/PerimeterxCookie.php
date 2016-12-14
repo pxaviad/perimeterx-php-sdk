@@ -31,7 +31,6 @@ class PerimeterxCookie
      */
     public function __construct($pxCtx, $pxConfig)
     {
-        error_log('cookie '. $pxCtx->getPxCookie());
         $count = substr_count($pxCtx->getPxCookie(), ":");
         $pos = strpos($pxCtx->getPxCookie, ":");
         if ($count === 3) {
@@ -89,7 +88,8 @@ class PerimeterxCookie
         if (isset($this->decodedCookie->s, $this->decodedCookie->s->a)) {
             return $this->getTime() . $this->decodedCookie->s->a . $this->getScore() . $this->getUuid() . $this->getVid();
         }
-        return $this->getTime() . $this->getScore() . $this->getUuid() . $this->getVid();
+        return json_encode($this->decodedCookie);
+        //return $this->getTime() . $this->getScore() . $this->getUuid() . $this->getVid();
     }
 
     /**
@@ -169,11 +169,12 @@ class PerimeterxCookie
             return false;
         }
 
+        // TODO: change this to be stuff
         //if (!isset($cookie->t, $cookie->s, $cookie->s->b, $cookie->u, $cookie->v, $cookie->h)) {
-        if (!isset($cookie->t, $cookie->s, $cookie->u, $cookie->v)) {
-            error_log('cookie declined : ' . json_encode($cookie));
-            return false;
-        }
+        //if (!isset($cookie->t, $cookie->s, $cookie->u, $cookie->v)) {
+            //error_log('cookie declined : ' . json_encode($cookie));
+            //return false;
+        //}
 
         $this->decodedCookie = $cookie;
 
